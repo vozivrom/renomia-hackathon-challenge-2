@@ -19,13 +19,13 @@ app = FastAPI(title="Challenge 2: Document Data Extraction")
 DATABASE_URL = os.environ.get(
     "DATABASE_URL", "postgresql://hackathon:hackathon@localhost:5432/hackathon"
 )
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+# GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 
 
 class GeminiTracker:
     """Wrapper around Gemini that tracks token usage."""
 
-    def __init__(self, api_key: str, model_name: str = "gemini-2.0-flash"):
+    def __init__(self, api_key: str, model_name: str = "gemini-2.5-flash"):
         self.enabled = bool(api_key)
         if self.enabled:
             genai.configure(api_key=api_key)
@@ -71,6 +71,21 @@ gemini = GeminiTracker(GEMINI_API_KEY)
 
 def get_db():
     return psycopg2.connect(DATABASE_URL)
+
+@app.post("/test-gemini")
+def test_gemini():
+    """Quick test to verify Gemini API key works."""
+    if not gemini.enabled:
+        return {"error": "GEMINI_API_KEY not set"}
+    try:
+        response = gemini.generate("Say 'hello' in Czech. Reply with one word only.")
+        return {
+            "status": "ok",
+            "response": response.text,
+            "metrics": gemini.get_metrics(),
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
 
 
 @app.on_event("startup")
