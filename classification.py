@@ -50,6 +50,10 @@ def _extract_amendment_number(filename: str, ocr_text: str) -> Optional[int]:
     if m:
         return int(m.group(1))
 
+    m = re.search(r'dodatek\s+c\.\s*(\d+)', tx)
+    if m:
+        return int(m.group(1))
+
     m = re.search(r'(?:kalkulacni\s+)?dodatek\s+c\.\s*(\d+)', tx)
     if m:
         return int(m.group(1))
@@ -59,6 +63,7 @@ def _extract_amendment_number(filename: str, ocr_text: str) -> Optional[int]:
         return int(m.group(1))
 
     return None
+
 
 
 def _extract_dolozka_code(filename: str, ocr_text: str) -> Optional[str]:
@@ -119,7 +124,9 @@ def classify_document(filename: str, ocr_text: str) -> dict:
         if label == "DOL":
             dolozka_code = _extract_dolozka_code(filename, text_head)
     elif len(matched) == 0:
+
         llm_result = _classify_with_llm(filename, ocr_text or "")
+        print("LLM used")
 
         global llm_calls
         llm_calls += 1
@@ -129,6 +136,12 @@ def classify_document(filename: str, ocr_text: str) -> dict:
         dolozka_code = llm_result.get("dolozka_code")
     else:
         label = _find_earliest(combined)
+
+        if label == "PS":
+            amendment_number = _extract_amendment_number(filename, text_head)
+
+        if label == "DOL":
+            dolozka_code = _extract_dolozka_code(filename, text_head)
 
     priority = DOC_PRIORITY.get(label, 0) if label else 0
     if label == "PS" and amendment_number is not None:

@@ -21,6 +21,7 @@ RULES = {
         r'pojistna\s+smlouva\s+cislo',
         r'pojistnou\s+smlouvu\s+c',
         r'kalkulacni\s+dodatek\s+c\.\s*\d+',
+        r'dodatek\s+c\.',
         r'dodatek\s+c\.\s*\d+',
         r'nalezitosti\s+dodatku',
         r'nalezitosti\s+pojistne\s+smlouvy',
