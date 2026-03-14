@@ -59,3 +59,7 @@ class ContractOutput(BaseModel):
     regPlate: Optional[str] = Field(None, description="SPZ vozidla, pouze pro pojištění vozidel")
     latestEndorsementNumber: Optional[str] = Field(None, description="Nejvyšší číslo dodatku ze všech dokumentů jako string")
     note: Optional[str] = Field(None, description="Zvláštní podmínky, null pokud žádné")
+    annualPremiumTotal: Optional[int] = Field(None, description="Celkové roční pojistné v CZK")
+    liabilityLimitHealth: Optional[int] = Field(None, description="Limit plnění pro újmu na zdraví v CZK")
+    liabilityLimitProperty: Optional[int] = Field(None, description="Limit plnění pro škodu na majetku v CZK")
+    insuranceScope: Optional[str] = Field(None, description="Rozsah/předmět pojištění")
