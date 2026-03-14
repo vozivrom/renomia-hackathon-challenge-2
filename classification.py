@@ -174,10 +174,10 @@ if __name__ == "__main__":
     print("CLASSIFICATION TEST")
     print("=" * 75)
 
-    with open("input_custom.json", encoding="utf-8") as f:
+    with open("input.json", encoding="utf-8") as f:
         data = json.load(f)
 
-    for item in data:
+    for item in data.get("documents"):
         r = classify_document(item.get("filename"), item.get("ocr_text"))
         item["label"] = r.get("label")
         print(item.get("filename"), r)
