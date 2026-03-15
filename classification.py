@@ -157,7 +157,7 @@ def classify_document(filename: str, ocr_text: str) -> dict:
     }
 
 
-def classify_and_sort(documents: list[dict]) -> list[dict]:
+def classify_and_sort(documents: list[dict]) -> list[str]:
     classified = []
     for doc in documents:
         classification = classify_document(
@@ -167,7 +167,9 @@ def classify_and_sort(documents: list[dict]) -> list[dict]:
         classified.append({**doc, "classification": classification})
 
     classified.sort(key=lambda d: d["classification"]["priority"])
-    return classified
+    print(classified[0])
+    sorted = [item.get("ocr_text") for item in classified]
+    return sorted
 
 
 if __name__ == "__main__":
@@ -177,12 +179,15 @@ if __name__ == "__main__":
     with open("input.json", encoding="utf-8") as f:
         data = json.load(f)
 
-    for item in data.get("documents"):
-        r = classify_document(item.get("filename"), item.get("ocr_text"))
-        item["label"] = r.get("label")
-        print(item.get("filename"), r)
-
-    print(f"LLM calls: {llm_calls}")
-
-    with open("input_custom.json", "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    sorted = classify_and_sort(data.get("documents", []))
+    print(json.dumps(sorted, indent=2))
+    print("=" * 75)
+    # for item in data.get("documents"):
+    #     r = classify_document(item.get("filename"), item.get("ocr_text"))
+    #     item["label"] = r.get("label")
+    #     print(item.get("filename"), r)
+    #
+    # print(f"LLM calls: {llm_calls}")
+    #
+    # with open("input_custom.json", "w", encoding="utf-8") as f:
+    #     json.dump(data, f, ensure_ascii=False, indent=2)

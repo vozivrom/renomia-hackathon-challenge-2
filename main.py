@@ -13,6 +13,8 @@ import psycopg2
 from fastapi import FastAPI
 import uvicorn
 
+import classification
+import extraction
 from db import get_db
 from gemini import gemini
 
@@ -131,6 +133,8 @@ def solve(payload: dict):
     # 5. For latestEndorsementNumber: find the highest amendment number
 
     documents = payload.get("documents", [])
+    sorted_texts = classification.classify_and_sort(documents)
+    result = extraction.extract_features(sorted_texts)
 
     result = {
         "contractNumber": None,
